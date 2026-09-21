@@ -2,6 +2,10 @@
 
 This is Gerard's application to get in. 
 
+### Requirements:
+
+need to have npm and uv. 
+
 ### How to run:
 
 go into the server folder and then run:
