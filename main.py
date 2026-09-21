@@ -12,6 +12,7 @@ from aiortc import (
 )
 from av import VideoFrame
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from insightface.app import FaceAnalysis
 from pydantic import BaseModel
 
@@ -145,6 +146,15 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
     openapi_url=None,
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_methods=["POST"],
+    allow_headers=["Content-Type"],
 )
 
 
