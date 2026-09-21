@@ -1,9 +1,31 @@
-# take home fpga project
+## take home fpga project
 
 This is Gerard's application to get in. 
 
+### How to run:
 
-Structure:
+go into the server folder and then run:
+```
+
+
+uv run main.py
+```
+
+and you should be good. 
+
+in another terminal, go into the dashboard folder and run:
+
+```
+npm i
+npm run dev
+```
+
+
+this will start up the dashboard and you should see yourself
+with the facial detection. 
+
+
+### Structure:
 
 dashboard: this dashboard is just Vite running the index.html and a main.js
 that interacts with the server to stream the video. 
@@ -49,5 +71,5 @@ sequenceDiagram
 
 but yeah this is my project, very basic. please check the 
 commits for more details on explanation but it was really general. i lowkey
-don't know that much about webrtc and how complicated it could get.
+don't know that much about webrtc and how complicated it could getjjj.
 
