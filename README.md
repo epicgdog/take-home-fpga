@@ -9,9 +9,8 @@ need to have npm and uv.
 ### How to run:
 
 go into the server folder and then run:
+
 ```
-
-
 uv run main.py
 ```
 
