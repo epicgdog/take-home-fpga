@@ -74,5 +74,5 @@ sequenceDiagram
 
 but yeah this is my project, very basic. please check the 
 commits for more details on explanation but it was really general. i lowkey
-don't know that much about webrtc and how complicated it could getjjj.
+don't know that much about webrtc and how complicated it could get.
 
