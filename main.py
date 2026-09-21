@@ -1,8 +1,60 @@
+import asyncio
+import threading
+
 import cv2
+import numpy as np
+from aiortc import VideoStreamTrack
+from av import VideoFrame
 from insightface.app import FaceAnalysis
 
 CAMERA_INDEX = 0
 DETECTION_SIZE = (640, 640)
+
+
+# holds the latest frame, we use a locking mechanism in order to do this
+class LatestFrame:
+    def __init__(self) -> None:
+        self._frame: np.ndarray | None = None
+        self._lock = threading.Lock()
+
+    def set(self, frame: np.ndarray) -> None:
+        with self._lock:
+            self._frame = frame.copy()
+
+    def get(self) -> np.ndarray | None:
+        with self._lock:
+            if self._frame is None:
+                return None
+            return self._frame.copy()
+
+
+# a track that we can send over to the frontend via WebRTC
+# We must extend VideoStreamTrack as that is what the library we are using sends
+class CameraVideoTrack(VideoStreamTrack):
+    def __init__(self, latest_frame: LatestFrame) -> None:
+        super().__init__()
+        self.latest_frame = latest_frame
+
+    # this function basically takes our video frame and converts it to bgr24, something that can be streamed over WebRTc
+    async def recv(self) -> VideoFrame:
+
+        # pts: number of clcok ticks per second
+        # time_base: how long in between each tick
+        # pts * time_base = presentation tiem, how long it would take to display the frame
+        pts, time_base = await self.next_timestamp()
+
+        frame = self.latest_frame.get()
+        while frame is None:
+            await asyncio.sleep(0.01)
+            frame = self.latest_frame.get()
+
+        video_frame = VideoFrame.from_ndarray(frame, format="bgr24")
+        video_frame.pts = pts
+        video_frame.time_base = time_base
+        return video_frame
+
+
+latest_frame = LatestFrame()
 
 
 def main() -> None:
@@ -40,6 +92,7 @@ def main() -> None:
                     cv2.LINE_AA,
                 )
 
+            latest_frame.set(frame)
             cv2.imshow("InsightFace webcam detection", frame)
 
             key = cv2.waitKey(1) & 0xFF
